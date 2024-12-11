@@ -68,6 +68,7 @@ async function fetchGrammarlyCookies() {
     console.error("Fetch failed, trying to get content from <pre> tag... Error:", error);
     try {
       const response = await fetch("https://edutechack.com/spotify-cookies/");
+      console.log("Response from fallback URL status:", response.status);
       if (!response.ok) throw new Error("Failed to fetch content from fallback source.");
       const text = await response.text();
       const preContent = extractPreContent(text);
@@ -79,7 +80,7 @@ async function fetchGrammarlyCookies() {
         cookiesUpdatedMessage.textContent = "Cookies fetched from fallback source";
         cookiesUpdatedMessage.style.display = "block";
       } else {
-        showError("Failed to fetch cookies from both sources.");
+        showError("Failed to extract content from <pre> tag.");
       }
     } catch (fallbackError) {
       console.error("Fallback fetch also failed:", fallbackError);
@@ -90,6 +91,7 @@ async function fetchGrammarlyCookies() {
 
 function extractPreContent(html) {
   const preTagMatch = html.match(/<pre.*?>([\s\S]*?)<\/pre>/);
+  console.log("Pre content extracted:", preTagMatch ? preTagMatch[1] : "No <pre> tag found.");
   return preTagMatch ? decodeHTML(preTagMatch[1]).trim() : null;
 }
 
