@@ -65,9 +65,10 @@ async function fetchGrammarlyCookies() {
       showError("Please Contact to Discord to get latest Cookies");
     }
   } catch (error) {
-    console.error("Fetch failed, trying to get content from <pre> tag...");
+    console.error("Fetch failed, trying to get content from <pre> tag... Error:", error);
     try {
       const response = await fetch("https://edutechack.com/spotify-cookies/");
+      if (!response.ok) throw new Error("Failed to fetch content from fallback source.");
       const text = await response.text();
       const preContent = extractPreContent(text);
       if (preContent) {
@@ -81,6 +82,7 @@ async function fetchGrammarlyCookies() {
         showError("Failed to fetch cookies from both sources.");
       }
     } catch (fallbackError) {
+      console.error("Fallback fetch also failed:", fallbackError);
       showError(`Error: ${fallbackError.message}`);
     }
   }
